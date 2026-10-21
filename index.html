@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joc encertar paraula</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/index.js" defer></script>
+</head>
+<body class="pagina-inicial">
+
+    <main class="contenedor-inicial">
+        <h1>Joc encertar paraula</h1>
+
+        <!-- Selección de 1 o 2 jugadores -->
+        <div class="seleccion-jugadores">
+            <label>
+                <input type="radio" name="numJugadors" id="radio-1j" value="1" checked> 1 jugador
+            </label>
+            <label>
+                <input type="radio" name="numJugadors" id="radio-2j" value="2"> 2 jugadors
+            </label>
+        </div>
+
+        <!-- Formulario Jugador 1 -->
+        <div class="grupo-input" id="contenedor-j1">
+            <label for="nom-j1">Introdueix el nom del jugador 1: *</label>
+            <div class="input-wrapper">
+                <span class="ayuda-input">Entre 4 i 14 caràcters: lletres, números i _</span>
+                <input type="text" id="nom-j1" placeholder="Exemple: Anna_23">
+                <span class="mensaje-validacion" id="msg-j1"></span>
+            </div>
+        </div>
+
+        <!-- Formulario Jugador 2 (Oculto por defecto mediante la clase 'oculto') -->
+        <div class="grupo-input oculto" id="contenedor-j2">
+            <label for="nom-j2">Introdueix el nom del jugador 2: *</label>
+            <div class="input-wrapper">
+                <span class="ayuda-input">Entre 4 i 14 caràcters: lletres, números i _</span>
+                <input type="text" id="nom-j2" placeholder="Exemple: Pau_07">
+                <span class="mensaje-validacion" id="msg-j2"></span>
+            </div>
+        </div>
+
+        <!-- Información del sistema y LocalStorage -->
+        <section class="info-sistema">
+            <div class="bloque-info">
+                <h2>Puntuació més alta</h2>
+                <p id="info-puntuacio">No hi ha puntuació actual</p>
+            </div>
+
+            <div class="bloque-info">
+                <h2>Informació navegador</h2>
+                <p id="info-navegador">Carregant...</p>
+            </div>
+
+            <div class="bloque-info">
+                <h2>Idioma del joc</h2>
+                <p id="info-idioma">Carregant...</p>
+            </div>
+
+            <div class="bloque-info">
+                <h2>Informació URL</h2>
+                <p id="info-url">Carregant...</p>
+            </div>
+        </section>
+
+        <!-- Botones de acción -->
+        <div class="botones-inicio">
+            <button type="button" id="btn-comencar-inici">Començar partida</button>
+            <button type="button" id="btn-borrar-puntuacio">Borrar puntuació</button>
+        </div>
+    </main>
+
+</body>
+</html>

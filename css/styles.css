@@ -1,0 +1,397 @@
+/* =========================================
+   ESTILOS GENERALES Y RESET
+   ========================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f4fce3; /* Color por defecto (se sobreescribirá por JS según el navegador) */
+    color: #222;
+    padding: 20px;
+}
+
+.oculto {
+    display: none !important;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* =========================================
+   PÁGINA INICIAL (index.html)
+   ========================================= */
+.contenedor-inicial {
+    max-width: 650px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.contenedor-inicial h1 {
+    font-size: 2rem;
+    margin-bottom: 25px;
+    font-weight: bold;
+}
+
+.seleccion-jugadores {
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.grupo-input {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.grupo-input label {
+    font-size: 0.95rem;
+}
+
+.input-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 280px;
+}
+
+.ayuda-input {
+    font-size: 0.68rem;
+    color: #444;
+    margin-bottom: 3px;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 6px 8px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    border: 1px solid #999;
+    background-color: #fff;
+    outline: none;
+}
+
+/* Clases para validación de inputs desde JS */
+.input-wrapper input.input-error {
+    border: 2px solid #d93025;
+}
+
+.input-wrapper input.input-correcto {
+    border: 2px solid #2e7d32;
+}
+
+.mensaje-validacion {
+    font-size: 0.72rem;
+    margin-top: 4px;
+    min-height: 14px;
+    text-align: left;
+}
+
+.mensaje-validacion.texto-error {
+    color: #d93025;
+}
+
+.mensaje-validacion.texto-correcto {
+    color: #2e7d32;
+}
+
+/* Información del sistema */
+.info-sistema {
+    margin-top: 20px;
+}
+
+.bloque-info {
+    margin-bottom: 22px;
+}
+
+.bloque-info h2 {
+    font-size: 1.25rem;
+    margin-bottom: 6px;
+}
+
+.bloque-info p {
+    font-size: 0.95rem;
+}
+
+.botones-inicio {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.botones-inicio button {
+    padding: 6px 14px;
+    background-color: #efefef;
+    border: 1px solid #767676;
+    border-radius: 3px;
+    font-size: 0.9rem;
+}
+
+.botones-inicio button:hover {
+    background-color: #e0e0e0;
+}
+
+/* =========================================
+   PÁGINA DEL JUEGO (joc.html)
+   ========================================= */
+.capcalera-joc {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    margin-bottom: 15px;
+}
+
+.btn-verde {
+    background-color: #b8f566;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+.btn-verde:hover:not(:disabled) {
+    background-color: #a3e052;
+}
+
+.control-paraula {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+}
+
+.input-ojo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.input-ojo input {
+    padding: 5px 8px;
+    width: 240px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    font-family: inherit;
+}
+
+.btn-icono {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    padding: 2px 5px;
+}
+
+/* 2. Mostrador de la palabra secreta */
+.mostrador-paraula {
+    background-color: #c5cbe3;
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+    font-size: 2.3rem;
+    letter-spacing: 8px; /* Espacio entre los guiones/letras */
+    margin-bottom: 15px;
+    min-height: 75px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estados al ganar o perder la partida */
+.mostrador-paraula.victoria {
+    background-color: #008000;
+    color: #000;
+    font-weight: bold;
+}
+
+.mostrador-paraula.derrota {
+    background-color: #ff0000;
+    color: #000;
+    font-weight: bold;
+}
+
+/* 3. Zona central: Jugadores y Globos */
+.zona-central {
+    background-color: #f5d1c8;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    min-height: 290px;
+    margin-bottom: 15px;
+}
+
+.panel-jugador {
+    width: 230px;
+    border-radius: 8px;
+    padding: 12px;
+    color: #fff;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+/* Colores para el turno de los jugadores */
+.panel-jugador.jugador-inactivo {
+    background-color: #c94c4c; /* Rojo cuando no tiene el turno o en modo 1J */
+}
+
+.panel-jugador.jugador-activo {
+    background-color: #4c9141; /* Verde cuando le toca el turno en 2J */
+}
+
+.panel-jugador h3 {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    font-family: Arial, sans-serif;
+}
+
+.stat-grupo {
+    margin-bottom: 6px;
+}
+
+.stat-titulo {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+}
+
+.stat-valor {
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.contenedor-globus {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.marco-globus {
+    background-color: #fff;
+    border: 2px solid #222;
+    border-radius: 10px;
+    width: 310px;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.marco-globus img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+}
+
+/* 4. Botones de letras */
+.contenedor-lletres {
+    background-color: #f5d1c8;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Estilo base para los botones que crees con createElement('button') */
+.contenedor-lletres button {
+    width: 36px;
+    height: 36px;
+    background-color: #b8f566;
+    border: 1px solid #000;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: #000;
+}
+
+/* Cuando están deshabilitados (antes de empezar o tras pulsarlos): borde y texto rojo */
+.contenedor-lletres button:disabled {
+    border: 1px solid #ff0000;
+    color: #ff0000;
+    opacity: 1; /* Mantiene el color vivo como en el PDF */
+}
+
+/* Modal <dialog> */
+.modal-error {
+    margin: auto;
+    padding: 20px 25px;
+    border: 2px solid #333;
+    border-radius: 6px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.modal-error::backdrop {
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
+.modal-error p {
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.modal-error button {
+    padding: 5px 15px;
+    border: 1px solid #333;
+    background-color: #eee;
+    border-radius: 3px;
+}
+
+/* =========================================
+   PÁGINA DE INSTRUCCIONES (instruccions.html)
+   ========================================= */
+.pagina-instruccions {
+    background-color: #fff;
+    font-family: Arial, sans-serif;
+    padding: 15px;
+}
+
+.contenedor-instruccions h1 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+}
+
+.lista-instruccions {
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+.lista-instruccions li {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    line-height: 1.35;
+}
+
+.centro {
+    text-align: center;
+}
+
+#btn-tancar-finestra {
+    padding: 5px 12px;
+    border: 1px solid #767676;
+    background-color: #efefef;
+    border-radius: 3px;
+}

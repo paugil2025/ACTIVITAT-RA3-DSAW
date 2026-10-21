@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="titol-pagina">jugador (0)</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/joc.js" defer></script>
+</head>
+<body class="pagina-joc">
+
+    <!-- 1. CAPÇALERA -->
+    <header class="capcalera-joc">
+        <button type="button" id="btn-tornar" class="btn-verde">&lt;&lt; Tornar</button>
+        <button type="button" id="btn-instruccions" class="btn-verde">Instruccions</button>
+
+        <div class="control-paraula">
+            <span id="idioma-joc">Idioma (ca)</span>
+            <div class="input-ojo">
+                <input type="password" id="input-paraula" placeholder="Introdueix una paraula">
+                <button type="button" id="btn-ull" class="btn-icono" title="Mostrar/Ocultar paraula">&#128065;</button>
+            </div>
+        </div>
+
+        <button type="button" id="btn-comencar-partida" class="btn-verde">Començar partida</button>
+    </header>
+
+    <!-- 2. PART DE LA PARAULA SECRETA -->
+    <!-- Añade las clases 'victoria' o 'derrota' desde JS para cambiar el fondo a verde o rojo -->
+    <section id="mostrador-paraula" class="mostrador-paraula">
+        Començar partida
+    </section>
+
+    <!-- 3. PART DE LA INFORMACIÓ I PISTES -->
+    <section class="zona-central">
+        
+        <!-- Bloque Jugador 1 (Por defecto en rojo/inactivo o verde según el turno) -->
+        <aside id="panel-j1" class="panel-jugador jugador-inactivo">
+            <h3 id="nom-panel-j1">jugador_1</h3>
+            
+            <div class="stat-grupo">
+                <p class="stat-titulo">PUNTS PARTIDES ACTUALS</p>
+                <p id="punts-j1" class="stat-valor">0</p>
+            </div>
+
+            <div class="stat-grupo">
+                <p class="stat-titulo">TOTAL PARTIDES</p>
+                <p id="total-j1" class="stat-valor">0</p>
+            </div>
+
+            <div class="stat-grupo">
+                <p class="stat-titulo">PARTIDES GUANYADES</p>
+                <p id="guanyades-j1" class="stat-valor">0</p>
+            </div>
+
+            <div class="stat-grupo">
+                <p class="stat-titulo">PARTIDA AMB MÉS PUNTS:</p>
+                <p id="record-j1" class="stat-valor">Sense punts</p>
+            </div>
+        </aside>
+
+        <!-- Bloque Imagen del Globo -->
+        <div class="contenedor-globus">
+            <div class="marco-globus">
+                <!-- Cambia el src desde JS según los fallos -->
+                <img id="img-globus" src="../img/globus0.png" alt="Estat del globus">
+            </div>
+        </div>
+
+        <!-- Bloque Jugador 2 (Oculto en modo 1 jugador, quitar clase 'oculto' en multijugador) -->
+        <aside id="panel-j2" class="panel-jugador jugador-inactivo oculto">
+            <h3 id="nom-panel-j2">jugador_2</h3>
+            
+            <div class="stat-grupo">
+                <p class="stat-titulo">PUNTS PARTIDES ACTUALS</p>
+                <p id="punts-j2" class="stat-valor">0</p>
+            </div>
+
+            <div class="stat-grupo">
+                <p class="stat-titulo">TOTAL PARTIDES</p>
+                <p id="total-j2" class="stat-valor">0</p>
+            </div>
+
+            <div class="stat-grupo">
+                <p class="stat-titulo">PARTIDES GUANYADES</p>
+                <p id="guanyades-j2" class="stat-valor">0</p>
+            </div>
+
+            <div class="stat-grupo">
+                <p class="stat-titulo">PARTIDA AMB MÉS PUNTS:</p>
+                <p id="record-j2" class="stat-valor">Sense punts</p>
+            </div>
+        </aside>
+
+    </section>
+
+    <!-- 4. PART DELS BOTONS (Generar con document.createElement('button') dentro de este div) -->
+    <section id="contenedor-lletres" class="contenedor-lletres">
+        <!-- Tus botones generados por JS irán aquí -->
+    </section>
+
+    <!-- MODAL DE ERRORES (Usar dialog.showModal() y dialog.close() en JS) -->
+    <dialog id="modal-error" class="modal-error">
+        <p id=" texto-modal-error">Has d'afegir una paraula per poder començar a jugar</p>
+        <button type="button" id="btn-tancar-modal">Tancar</button>
+    </dialog>
+
+</body>
+</html>
