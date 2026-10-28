@@ -10,22 +10,38 @@ const contenedorLetres = document.querySelector("#contenedor-lletres");
 const imgGlobo = document.querySelector("#img-globus");
 const dialog = document.querySelector("#modal-error");
 const textDialog = document.querySelector("#texto-modal-error");
-const nomPanellJ1 = document.querySelector("#nom-panel-j1");
-const puntsPanellJ1 = document.querySelector("#punts-j1");
-const partidesPanelJ1 = document.querySelector("#total-j1");
-const victoriesPanelJ1 = document.querySelector("#guanyades-j1");
-const recordPanelJ1 = document.querySelector("#record-j1");
+
+const STORAGE_ESTADISTIQUES = "estadistiquesJugadors";
+const STORAGE_PUNTUACIO_MAXIMA = "puntuacioMesAlta";
+
+const panellsJugadors = [
+    {
+        nom: document.querySelector("#nom-panel-j1"),
+        punts: document.querySelector("#punts-j1"),
+        partides: document.querySelector("#total-j1"),
+        victories: document.querySelector("#guanyades-j1"),
+        record: document.querySelector("#record-j1"),
+        panell: document.querySelector("#panel-j1")
+    },
+    {
+        nom: document.querySelector("#nom-panel-j2"),
+        punts: document.querySelector("#punts-j2"),
+        partides: document.querySelector("#total-j2"),
+        victories: document.querySelector("#guanyades-j2"),
+        record: document.querySelector("#record-j2"),
+        panell: document.querySelector("#panel-j2")
+    }
+];
+
 const totalJugades = 9;
 
-let puntuacioJ1 = 0;
-let puntsJ1 = 0;
 let ratxa = 0;
 let paraulaAdivinar;
 let paraulaNormalitzada;
 let guiones;
 let jugadesFetes = 0;
-let partidesTotal=0 ;
-let maxpuntsJ1 = 0;
+let jugadorActualIndex = 0;
+let partidaActiva = false;
 
 
 
@@ -49,25 +65,84 @@ function llegirCookie(nom) {
     }
     return null;
 }
-const AlFinalSoloSeremosHistoria = function(){
-    let porcentaje = partidesTotal > 0 ? ((puntuacioJ1 / partidesTotal) * 100).toFixed(2) + "%": "0%";
 
-    partidesPanelJ1.textContent = partidesTotal;
-    victoriesPanelJ1.textContent = puntuacioJ1 + "(" + porcentaje + ")";
-    recordPanelJ1.textContent = maxpuntsJ1;
+// Crea un jugador amb les seves estadístiques.
+function crearJugador(nom) {
+    const estadistiques = JSON.parse(localStorage.getItem(STORAGE_ESTADISTIQUES) || "[]");
+    let desades = null;
+    for (let i = 0; i < estadistiques.length; i++) {
+        if (estadistiques[i].nom === nom) {
+            desades = estadistiques[i];
+            break;
+        }
+    }
+
+    let partides = 0;
+    let victories = 0;
+    let record = 0;
+    let dataRecord = null;
+
+    if (desades !== null) {
+        partides = desades.partides || 0;
+        victories = desades.victories || 0;
+        record = desades.record || 0;
+        dataRecord = desades.dataRecord || null;
+    }
+
+    return {
+        nom,
+        punts: 0,
+        partides: partides,
+        victories: victories,
+        record: record,
+        dataRecord: dataRecord
+    };
 }
 
-const actualitzarTarjetes = function () {
+const jugadors = [
+    crearJugador(llegirCookie("jugador1"))
+];
 
-    document.title = llegirCookie("jugador1") + "(" + puntuacioJ1 + ")";
+if (llegirCookie("jugador2")) {
+    jugadors.push(crearJugador(llegirCookie("jugador2")));
+    panellsJugadors[1].panell.classList.remove("oculto");
+}
+
+// Actualitza la informació dels jugadors a la pantalla.
+const actualitzarTarjetes = function () {
+    document.title = jugadors[0].nom + "(" + jugadors[0].victories + ")";
     document.body.style.backgroundColor = ObjInfo.color;
     spanIdioma.textContent = "Idioma (" + ObjInfo.idioma + ")";
-    nomPanellJ1.textContent = llegirCookie("jugador1");
-    puntsPanellJ1.textContent = puntsJ1;
- 
-    
-    
+    for (let index = 0; index < jugadors.length; index++) {
+        const jugador = jugadors[index];
+        const panell = panellsJugadors[index];
+        let porcentaje = "0%";
+        if (jugador.partides > 0) {
+            porcentaje = ((jugador.victories / jugador.partides) * 100).toFixed(2) + "%";
+        }
 
+        panell.nom.textContent = jugador.nom;
+        panell.punts.textContent = jugador.punts;
+        panell.partides.textContent = jugador.partides;
+        panell.victories.textContent = jugador.victories + " (" + porcentaje + ")";
+        if (jugador.dataRecord) {
+            panell.record.textContent = jugador.record + " punts - "
+                + new Date(jugador.dataRecord).toLocaleString();
+        } else {
+            panell.record.textContent = "Sense punts";
+        }
+        const teElTorn = jugadors.length > 1
+            && partidaActiva
+            && index === jugadorActualIndex;
+        panell.panell.classList.toggle(
+            "jugador-activo",
+            teElTorn
+        );
+        panell.panell.classList.toggle(
+            "jugador-inactivo",
+            !teElTorn
+        );
+    }
 }
 btnTornar.addEventListener("click", () => {
     if (confirm("Estàs segur que vols deixar la partida?")) {
@@ -115,19 +190,26 @@ const validarParaula = function () {
 // funcio habilita els botons
 const activarBotons = function (estat) {
     const botons = contenedorLetres.querySelectorAll("button");
-    botons.forEach(boto => boto.disabled = estat);
+    for (let i = 0; i < botons.length; i++) {
+        botons[i].disabled = estat;
+    }
 };
 
 btnComencar.addEventListener("click", () => {
     if (!validarParaula()) {
         return
     };
-    puntsJ1 = 0;
+    for (let i = 0; i < jugadors.length; i++) {
+        jugadors[i].punts = 0;
+    }
+    jugadorActualIndex = 0;
     ratxa = 0;
+    jugadesFetes = 0;
+    partidaActiva = true;
+    imgGlobo.src = "../img/img_0.png";
     guions();
     paraulaNormalitzada = normalitzarText(paraulaAdivinar);
     activarBotons(false);
-    partidesTotal++;
     actualitzarTarjetes();
 
 });
@@ -147,13 +229,14 @@ const guions = function () {
 
 }
 
+// Crea els botons de les lletres.
 const generarLletres = function () {
     let idiomaLLetres;
     if (ObjInfo.idioma == "ca") {
         idiomaLLetres = LLETRES_CA;
     } else if (ObjInfo.idioma == "es") {
         idiomaLLetres = LLETRES_ESP;
-    } else if (ObjInfo.idioma == "en") {
+    } else {
         idiomaLLetres = LLETRES_EN;
     }
     for (let i = 0; i < idiomaLLetres.length; i++) {
@@ -167,28 +250,37 @@ const generarLletres = function () {
                 for (let e = 0; e < paraulaNormalitzada.length; e++) {
                     if (idiomaLLetres[i] == paraulaNormalitzada[e]) {
                         mostrarLletra(e);
-                        puntsJ1 += ratxa;
+                        jugadors[jugadorActualIndex].punts += ratxa;
                     }
                 }
             } else {
                 jugadesFetes++;
                 imgGlobo.src = `../img/img_${jugadesFetes}.png`;
-                puntsJ1--;
+                jugadors[jugadorActualIndex].punts = Math.max(
+                    0,
+                    jugadors[jugadorActualIndex].punts - 1
+                );
                 ratxa = 0;
-
+                jugadorActualIndex = (jugadorActualIndex + 1) % jugadors.length;
             }
             boto.disabled = true;
             if (guiones == paraulaAdivinar) {
-                puntuacioJ1++;
-                reiniciar();
                 mostradorP.classList.add("victoria");
-                if (maxpuntsJ1<=puntsJ1){
-                    maxpuntsJ1=puntsJ1;
+                if (jugadors.length === 1) {
+                    jugadors[0].victories++;
+                } else if (jugadors[0].punts !== jugadors[1].punts) {
+                    if (jugadors[0].punts > jugadors[1].punts) {
+                        jugadors[0].victories++;
+                    } else {
+                        jugadors[1].victories++;
+                    }
                 }
 
+                finalitzarPartida();
             } else if (jugadesFetes == totalJugades) {
-                reiniciar();
+                mostradorP.textContent = paraulaAdivinar.toUpperCase();
                 mostradorP.classList.add("derrota");
+                finalitzarPartida();
             }
             actualitzarTarjetes();
 
@@ -216,10 +308,72 @@ function normalitzarText(text) {
 
 // aixo s'utilitza quan comença la partida per desactivar el imput y activar els botons
 function reiniciar() {
-    AlFinalSoloSeremosHistoria();
+    partidaActiva = false;
     activarBotons(true);
     inputParaula.disabled = false;
     btnComencar.disabled = false;
+}
+// lo que succedeix quan es finalitza la partida
+function finalitzarPartida() {
+    const dataFinalitzacio = new Date();  // data
+    for (let i = 0; i < jugadors.length; i++) {
+        const jugador = jugadors[i];
+        jugador.partides++;
+        if (jugador.punts > jugador.record || !jugador.dataRecord) {
+            jugador.record = jugador.punts;
+            jugador.dataRecord = dataFinalitzacio.toISOString(); // .toISOString serveix per pasar-ho a string
+        }
+    }
+    guardarEstadistiquesJugadors();
+    guardarPuntuacioMesAlta(dataFinalitzacio);
+    reiniciar();
+}
+
+// Guarda les estadístiques dels jugadors.
+function guardarEstadistiquesJugadors() {
+    const estadistiques = JSON.parse(localStorage.getItem(STORAGE_ESTADISTIQUES) || "[]");
+    for (let i = 0; i < jugadors.length; i++) {
+        const jugador = jugadors[i];
+        let index = -1;
+        for (let i = 0; i < estadistiques.length; i++) {
+            if (estadistiques[i].nom === jugador.nom) {
+                index = i;
+                break;
+            }
+        }
+        const dadesJugador = {
+            nom: jugador.nom,
+            partides: jugador.partides,
+            victories: jugador.victories,
+            record: jugador.record,
+            dataRecord: jugador.dataRecord
+        };
+        if (index === -1) {
+            estadistiques.push(dadesJugador);
+        } else {
+            estadistiques[index] = dadesJugador;
+        }
+    }
+    localStorage.setItem(STORAGE_ESTADISTIQUES, JSON.stringify(estadistiques));
+}
+
+// Guarda la puntuació més alta.
+function guardarPuntuacioMesAlta(dataFinalitzacio) {
+    const puntuacioMesAlta = JSON.parse(
+        localStorage.getItem(STORAGE_PUNTUACIO_MAXIMA) || "null"
+    );
+    let millorJugador = jugadors[0];
+    if (jugadors.length > 1 && jugadors[1].punts > millorJugador.punts) {
+        millorJugador = jugadors[1];
+    }
+
+    if (!puntuacioMesAlta || millorJugador.punts > puntuacioMesAlta.punts) {
+        localStorage.setItem(STORAGE_PUNTUACIO_MAXIMA, JSON.stringify({
+            nom: millorJugador.nom,
+            punts: millorJugador.punts,
+            data: dataFinalitzacio.toISOString()
+        }));
+    }
 }
 // Event tancar dialog
 document.querySelector("#btn-tancar-modal").addEventListener("click", () => {

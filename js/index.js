@@ -6,8 +6,10 @@ const btnCom = document.querySelector("#btn-comencar-inici");
 const btnBor= document.querySelector("#btn-borrar-puntuacio");
 
 const radios = document.querySelectorAll('input[name="numJugadors"]');
+const STORAGE_ESTADISTIQUES = "estadistiquesJugadors";
+const STORAGE_PUNTUACIO_MAXIMA = "puntuacioMesAlta";
 
-let opcio;
+let opcio = document.querySelector('input[name="numJugadors"]:checked')?.value || "1";
 const contenedor2 = document.querySelector("#contenedor-j2");
 
 
@@ -18,13 +20,23 @@ const msgJ2 = document.querySelector("#msg-j2");
 
 
 
+function eliminarCookieJugador2() {
+  document.cookie = "jugador2=; Max-Age=0; path=/";
+}
+
+if (opcio === "1") {
+  contenedor2.classList.add("oculto");
+  eliminarCookieJugador2();
+}
+
 // identifiquem que radios esta actiu
 radios.forEach(radio => {
   radio.addEventListener('change', (event) => {
     // event.target conté el radio especific que s'acaba de seleccionar
     opcio = event.target.value;
-    if (opcio==1){
+    if (opcio === "1"){
       contenedor2.classList.add("oculto");
+      eliminarCookieJugador2();
     }else{
       contenedor2.classList.remove("oculto");
     }
@@ -36,7 +48,7 @@ radios.forEach(radio => {
 function validarJugador(){
 
     const jugador1 = comprovarJugador(nomJ1.value, nomJ1, msgJ1);
-    if (opcio==2){
+    if (opcio === "2"){
       const jugador2 = comprovarJugador(nomJ2.value, nomJ2, msgJ2);
       return (jugador1&&jugador2);
     }
@@ -49,12 +61,6 @@ function comprovarJugador(jugador, lloc, msg){
   let missatge = "";
   const patro = /^\w+$/;
   let valid;
-  if (lloc == nomJ2){
-    if(nomJ1.value == nomJ2.value){
-      missatge = "Els dos jugadors han de tenir noms diferents"
-    }
-  }
-
   if (jugador.trim()== ""){
       missatge= "Has d'informar el nom d'un jugador";
   }else if (jugador.length<4){
@@ -63,6 +69,8 @@ function comprovarJugador(jugador, lloc, msg){
       missatge="El nom ha de tenir menys de 15 caràcters"
   }else if (!patro.test(jugador)){
       missatge="Només es poden introduir lletres sense accents, números i _";
+  }else if (lloc === nomJ2 && nomJ1.value.trim().toLowerCase() === jugador.trim().toLowerCase()){
+      missatge = "Els dos jugadors han de tenir noms diferents";
   }
   if (missatge){
     msg.classList.add("texto-error");
@@ -98,7 +106,7 @@ const navegatorUsat = function () {
   if (ua.includes("Edg")) return "Edge";
   if (ua.includes("Chrome")) return "Chrome";
   if (ua.includes("Safari")) return "Safari";
-  return "Desconegut";
+  return "Altres";
 };
 const changeBackgroundColor = function(){
     // Utiliza variables CSS definidas en style.css para los colores de fondo
@@ -107,7 +115,7 @@ const changeBackgroundColor = function(){
       Edge: "#d0ebff",       // Azul cielo pastel (inspirado en Edge)
       Chrome: "#f4fce3",     // Verde lima muy suave (el tono exacto de las capturas del PDF con Chrome)
       Safari: "#e3fafc",     // Cian / turquesa muy claro (inspirado en Safari)
-      Desconegut: "#f3f0ff"  // Lavanda / grisáceo muy suave por defecto
+      Altres: "#f3f0ff"  // Lavanda / grisáceo muy suave por defecto
     };
 
     const color = colors[navegatorUsat()];
@@ -131,12 +139,26 @@ infoUrl.textContent = informacioPropia.url;
 
 sessionStorage.setItem("informacioPropia", JSON.stringify(informacioPropia));
 
+function mostrarPuntuacioMesAlta() {
+  const puntuacioGuardada = localStorage.getItem(STORAGE_PUNTUACIO_MAXIMA);
+  if (!puntuacioGuardada) {
+    infoPun.textContent = "No hi ha puntuació actual";
+    return;
+  }
+
+  const puntuacio = JSON.parse(puntuacioGuardada);
+  infoPun.textContent = `${puntuacio.nom} - ${puntuacio.punts} punts - ${new Date(puntuacio.data).toLocaleString()}`;
+}
+
+mostrarPuntuacioMesAlta();
 
 const redireccionar = function(){
 if (validarJugador()) {
-  document.cookie = `jugador1=${encodeURIComponent(nomJ1.value)}; path=/`;
-  if (opcio == 2) {
-    document.cookie = `jugador2=${encodeURIComponent(nomJ2.value)}; path=/;`;
+  document.cookie = `jugador1=${encodeURIComponent(nomJ1.value.trim())}; path=/`;
+  if (opcio === "2") {
+    document.cookie = `jugador2=${encodeURIComponent(nomJ2.value.trim())}; path=/;`;
+  } else {
+    eliminarCookieJugador2();
   }
   location.href = "html/joc.html";
   }
@@ -150,6 +172,8 @@ btnCom.addEventListener("click", (e) =>{
 btnBor.addEventListener("click", (e) =>{
   e.preventDefault();
   if(confirm("Estàs segur que vols esborrar la informació de la puntuació?")){
+    localStorage.removeItem(STORAGE_PUNTUACIO_MAXIMA);
+    localStorage.removeItem(STORAGE_ESTADISTIQUES);
     infoPun.textContent = "No hi ha puntuació actual";
   }
 
