@@ -129,21 +129,28 @@ idiomaJoc.textContent= informacioPropia.idioma;
 infoUrl.textContent = informacioPropia.url;
 
 
+sessionStorage.setItem("informacioPropia", JSON.stringify(informacioPropia));
+
 
 const redireccionar = function(){
-  if (validarJugador()){
-    location.href = "html/joc.html"
+if (validarJugador()) {
+  document.cookie = `jugador1=${encodeURIComponent(nomJ1.value)}; path=/`;
+  if (opcio == 2) {
+    document.cookie = `jugador2=${encodeURIComponent(nomJ2.value)}; path=/;`;
+  }
+  location.href = "html/joc.html";
   }
 }
 
-btnCom.addEventListener("click", () =>{
+btnCom.addEventListener("click", (e) =>{
+  e.preventDefault();
   redireccionar();
 });
 
-btnBor.addEventListener("click", () =>{
+btnBor.addEventListener("click", (e) =>{
+  e.preventDefault();
   if(confirm("Estàs segur que vols esborrar la informació de la puntuació?")){
     infoPun.textContent = "No hi ha puntuació actual";
   }
- 
 
 });
